@@ -3,8 +3,8 @@ name: Continuous Integration/Deployment
 on: [pull_request, push]
 
 jobs:
-  check:
-    name: Check files
+  frontendCheck:
+    name: Check if files modified in frontend folder
     outputs:
       run_job: ${{ steps.check_files.outputs.run_job }}
     runs-on: ubuntu-latest
@@ -17,16 +17,11 @@ jobs:
       - name: check modified files
         id: check_files
         run: |
-          echo "=============== list modified files ==============="
-          git diff --name-only HEAD^ HEAD
-
-          echo "========== check paths of modified files =========="
           git diff --name-only HEAD^ HEAD > files.txt
           while IFS= read -r file
           do
             echo $file
-            if [[ $file != tests/* ]]; then
-              echo "This modified file is not under the 'db' folder."
+            if [[ $file != frontend/* ]]; then
               echo "run_job=false" >> $GITHUB_OUTPUT
               break
             else
@@ -35,8 +30,8 @@ jobs:
           done < files.txt
 
   build:
-    needs: check
-    if: needs.check.outputs.run_job == 'true'
+    needs: frontendCheck
+    if: needs.frontendCheck.outputs.run_job == 'true'
     concurrency:
       cancel-in-progress: true
       group: ${{ github.workflow }}-${{ github.ref }}
@@ -56,8 +51,8 @@ jobs:
 
   deploy:
     runs-on: ubuntu-latest
-    needs: check
-    if: needs.check.outputs.run_job == 'false'
+    needs: frontendCheck
+    if: needs.frontendCheck.outputs.run_job == 'false'
 
     steps:
       - uses: actions/checkout@v3
