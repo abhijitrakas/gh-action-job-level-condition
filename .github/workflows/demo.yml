@@ -77,4 +77,4 @@ jobs:
     if: always()
 
     steps:
-      - run: echo "::debug::deploy job"
+      - run: echo "::debug::slack job"
