@@ -22,13 +22,11 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-        with:
-          fetch-depth: 2
 
       - name: check modified files
         id: check_files
         run: |
-          echo "run_job=false" > $GITHUB_OUTPUT
+          echo "run_job=false" >> $GITHUB_OUTPUT
           git diff --name-only HEAD^ HEAD > files.txt
           while IFS= read -r file
           do
