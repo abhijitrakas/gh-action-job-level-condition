@@ -1,6 +1,17 @@
 name: Continuous Integration/Deployment
 
-on: [pull_request, push]
+on:
+  pull_request:
+    branches:
+      - main
+      - staging
+      - develop
+      - rc-*
+  push:
+    branches:
+      - main
+      - staging
+      - develop
 
 jobs:
   frontendCheck:
@@ -17,15 +28,13 @@ jobs:
       - name: check modified files
         id: check_files
         run: |
+          echo "run_job=false" > $GITHUB_OUTPUT
           git diff --name-only HEAD^ HEAD > files.txt
           while IFS= read -r file
           do
-            echo $file
-            if [[ $file != frontend/* ]]; then
-              echo "run_job=false" >> $GITHUB_OUTPUT
-              break
-            else
+            if [[ $file == frontend/* ]]; then
               echo "run_job=true" >> $GITHUB_OUTPUT
+              break
             fi
           done < files.txt
 
