@@ -4,7 +4,7 @@ on: [pull_request, push]
 
 jobs:
   frontendCheck:
-    name: Check if files modified in frontend folder
+    name: Check frontend code modified
     outputs:
       run_job: ${{ steps.check_files.outputs.run_job }}
     runs-on: ubuntu-latest
